@@ -1,0 +1,26 @@
+{
+  "name": "janitor-userscript",
+  "description": "basic userscript that i use for janitorAI",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "author": {
+    "name": "michei69",
+    "email": "michei69@duck.com",
+    "url": "https://github.com/michei69"
+  },
+  "license": "MIT",
+  "scripts": {
+    "dev": "bun build.ts --watch",
+    "build": "bun build.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "esbuild": "^0.27.1"
+  }
+}
