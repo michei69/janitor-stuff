@@ -1,7 +1,6 @@
 import patchChat from "./chat";
 import patchWhatever from "./hiddengems";
 import processDefineProp, { isStore, searchForStores } from "./hooker";
-import patchMbxM from "./initState";
 import patchSearch from "./search";
 import setupTTS, { ToggleDeltaTTS, ToggleTTS } from "./tts";
 
@@ -95,7 +94,6 @@ import setupTTS, { ToggleDeltaTTS, ToggleTTS } from "./tts";
     })();
 
     console.log("Janitor qol n shi loaded!");
-    patchMbxM()
 
     // wait cuz SSR has to hydrate n shi
     // TODO: hook sth so i dont have to guess like this
