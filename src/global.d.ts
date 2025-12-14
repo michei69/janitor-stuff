@@ -20,7 +20,12 @@ declare interface Window {
         Generation: { [key: string]: any },
         HiddenGemsFurryFilter: boolean,
         Navigate: (...args) => void,
-        InitState: any
+        InitState: any,
+        React: any,
+        ReactDOM: any,
+        ReactJSX: any,
+        esModules: any[],
+        MainModule: any,
     },
     Object: ObjectConstructor,
     mbxM: any

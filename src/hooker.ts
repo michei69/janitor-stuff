@@ -4,14 +4,13 @@
 
 function patchMessagesStore(store: any) {
     // Force all messages to be deletable
-    store.canBeDeleted = (s: any) => true;
+    store.canBeDeleted = (_: any) => true;
 
     // Force initial message to be editable
     if (typeof store.canEditMessage_ORIGINAL == "undefined")
         store.canEditMessage_ORIGINAL = store.canEditMessage
     store.canEditMessage = (s: any) => {
-        //@ts-ignore yes it can you dumb bitch
-        if (s.id == store.messages.at(0).id ?? 0) {
+        if (s.id == (store.messages.at(0).id ?? 0)) {
             let resp = store.canEditMessage_ORIGINAL.call(store, {
                 ...s,
                 id: 1
@@ -75,6 +74,18 @@ async function patchStoreProps() {
 
 //* process define prop
 export default function processDefineProp(obj: any, prop: any, descriptor: PropertyDescriptor & ThisType<any>) {
+    // console.log(prop)
+    if (typeof prop == "string") {
+        if (prop.includes("createElement"))
+            wnd.Janitor.React = obj
+        else if (prop.includes("__esModule")) {
+            wnd.Janitor.esModules.push(obj)
+        }
+    }
+    if (descriptor.value == "Module") {
+        // console.log(obj, prop, descriptor)
+        wnd.Janitor.esModules.push(obj)
+    }
     if (typeof obj != "object") return
     for (let key of Object.keys(obj)) {
         if (key.trim() == "messagesStore") {
@@ -91,4 +102,9 @@ export default function processDefineProp(obj: any, prop: any, descriptor: Prope
             break
         }
     }
+}
+
+export function processHasOwnProp(tsObj: any, prop: PropertyKey) {
+    // if (prop.toString().toLowerCase().includes("default") || prop.toString().includes("__"))
+    //     console.log(tsObj, prop)
 }

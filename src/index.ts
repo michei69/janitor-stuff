@@ -1,7 +1,8 @@
 import patchChat from "./chat";
 import patchWhatever from "./hiddengems";
-import processDefineProp, { isStore, searchForStores } from "./hooker";
+import processDefineProp, { isStore, processHasOwnProp, searchForStores } from "./hooker";
 import patchSearch from "./search";
+import { bootstrap } from "./loader";
 import setupTTS, { ToggleDeltaTTS, ToggleTTS } from "./tts";
 
 (async () => {
@@ -26,7 +27,12 @@ import setupTTS, { ToggleDeltaTTS, ToggleTTS } from "./tts";
         Generation: {},
         HiddenGemsFurryFilter: false,
         Navigate: (...args) => {},
-        InitState: null
+        InitState: null,
+        React: null,
+        ReactDOM: null,
+        ReactJSX: null,
+        esModules: [],
+        MainModule: null
     }
 
     // hook stores n stuff
@@ -46,6 +52,11 @@ import setupTTS, { ToggleDeltaTTS, ToggleTTS } from "./tts";
             }
         
         return mapHas.call(this, ...args)
+    }
+    const hasOwnProp = Object.prototype.hasOwnProperty
+    Object.prototype.hasOwnProperty = function (v: PropertyKey) {
+        processHasOwnProp(this, v)
+        return hasOwnProp.call(this, v)
     }
 
     // setup tts
@@ -95,9 +106,23 @@ import setupTTS, { ToggleDeltaTTS, ToggleTTS } from "./tts";
 
     console.log("Janitor qol n shi loaded!");
 
-    // wait cuz SSR has to hydrate n shi
-    // TODO: hook sth so i dont have to guess like this
-    await new Promise(resolve => setTimeout(resolve, 5000));
-    unsafeWindow.Janitor.Toastify.showInfo("Loaded!")
+    // wait for react to instantiate cuz SSR has to hydrate n shi
+    while (
+        typeof wnd.Janitor.React == "undefined" || 
+        typeof wnd.Janitor.React?.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED == "undefined" ||
+        typeof wnd.Janitor.React?.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.ReactCurrentDispatcher == "undefined" ||
+        typeof wnd.Janitor.React?.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.ReactCurrentDispatcher?.current == "undefined"
+    )
+    {
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    console.log("react")
+    bootstrap()
+    
+    // toastify is never loaded istfg
+    while (typeof wnd.Janitor.Toastify == "undefined" || typeof wnd.Janitor.Toastify?.showInfo == "undefined") {
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    wnd.Janitor.Toastify.showInfo("Loaded!")
     patchWhatever()
 })()

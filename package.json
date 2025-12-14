@@ -15,12 +15,13 @@
     "build": "bun build.ts"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "esbuild": "^0.27.1",
+    "esbuild-plugin-external-global": "^1.0.1"
   },
   "peerDependencies": {
     "typescript": "^5"
-  },
-  "dependencies": {
-    "esbuild": "^0.27.1"
   }
 }

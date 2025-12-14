@@ -9,6 +9,13 @@ a custom-made userscript that adds or fixes certain functionality that was eithe
 - saves any available stores and storeprops under the `Janitor` object for easy access
 - should be up to date even across page navigation
 
+### hooks all esModules and react, reactDOM, reactJSX
+
+- means u can use react for any UI mods if you want to for some reason
+- would also mean you can load official components too
+- reactDOM and reactJSX are loaded separately, as are all esModules because theres no real way to hook them unfortunately
+- react is hooked directly from the original script though
+
 ### enables deletion and editing of first message
 
 - i hate the formatting or layout of certain bots' first messages but love the idea, and the fact this is marked as `not likely` by the jAI team is kinda disappointing
