@@ -4,6 +4,7 @@ import processDefineProp, { isStore, processHasOwnProp, searchForStores } from "
 import patchSearch from "./search";
 import { bootstrap } from "./loader";
 import setupTTS, { ToggleDeltaTTS, ToggleTTS } from "./tts";
+import { disableEventLogger } from "./disableLogger";
 
 (async () => {
     // we js need a window object bruh
@@ -34,6 +35,8 @@ import setupTTS, { ToggleDeltaTTS, ToggleTTS } from "./tts";
         esModules: [],
         MainModule: null
     }
+    disableEventLogger()
+
 
     // hook stores n stuff
     const defineProperty = Object.defineProperty

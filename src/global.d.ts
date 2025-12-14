@@ -28,5 +28,6 @@ declare interface Window {
         MainModule: any,
     },
     Object: ObjectConstructor,
-    mbxM: any
+    mbxM: any,
+    __STATSIG__: any,
 }
