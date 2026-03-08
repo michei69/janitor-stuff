@@ -5,8 +5,18 @@ import patchSearch from "./search";
 import { bootstrap } from "./loader";
 import setupTTS, { ToggleDeltaTTS, ToggleTTS } from "./tts";
 import { disableEventLogger } from "./disableLogger";
+import { hookReactCreateElement } from "./ui/hooker";
 
 (async () => {
+    // function removeChakraSpan() {
+    //     document.querySelectorAll('span.__chakra_env').forEach(span => span.remove());
+    // }
+    // if (document.body) {
+    //     removeChakraSpan();
+    // } else {
+    //     document.addEventListener('DOMContentLoaded', removeChakraSpan);
+    // }
+
     // we js need a window object bruh
     const wnd: Window = typeof unsafeWindow != "undefined" ? unsafeWindow : window
     globalThis.wnd = wnd
@@ -19,7 +29,8 @@ import { disableEventLogger } from "./disableLogger";
         Hooks: {
             Delta: (...args) => {},
             StopStream: (...args) => {},
-            SaveMessage: (message) => {}
+            SaveMessage: (message) => {},
+            ReactCreateElement: (...args) => {}
         },
         Toastify: null as any,
         Stores: {},

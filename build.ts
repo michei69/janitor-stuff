@@ -8,7 +8,7 @@ import { externalGlobalPlugin } from 'esbuild-plugin-external-global'
 `{
     jsx: (...args) => wnd.Janitor.ReactJSX.jsx(...args),
     jsxs: (...args) => wnd.Janitor.ReactJSX.jsxs(...args),
-    Fragment: (...args) => wnd.Janitor.ReactJSX.Fragment(...args)
+    Fragment: Symbol.for("react.fragment")
 }`
     const reactShim = 
 `{
@@ -63,6 +63,7 @@ import { externalGlobalPlugin } from 'esbuild-plugin-external-global'
             externalGlobalPlugin({
                 "react": reactShim,
                 "react-dom": reactDOMShim,
+                "react-dom/client": reactDOMShim,
                 "react/jsx-runtime": jsxShim
             })
         ]

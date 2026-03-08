@@ -3,7 +3,7 @@
 import type { JMessage } from "./tts";
 
 // https://greasyfork.org/en/scripts/551458-janitor-ai-automatic-message-formatting-corrector-settings-menu
-function processText(text: string) {
+export function processText(text: string) {
     // 1. Remove tags if enabled
     text = text.replace(/\n?\s*<(thought|thoughts)>[\s\S]*?<\/(thought|thoughts)>\s*\n?/g, '')
         .replace(/<(system|response)>|<\/response>/g, '')

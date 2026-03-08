@@ -2,6 +2,8 @@
 // hooker!
 // ...get it?
 
+import { hookReactCreateElement } from "./ui/hooker";
+
 function patchMessagesStore(store: any) {
     // Force all messages to be deletable
     store.canBeDeleted = (_: any) => true;
@@ -76,8 +78,13 @@ async function patchStoreProps() {
 export default function processDefineProp(obj: any, prop: any, descriptor: PropertyDescriptor & ThisType<any>) {
     // console.log(prop)
     if (typeof prop == "string") {
-        if (prop.includes("createElement"))
+        // console.log(obj, prop)
+        if (prop.includes("createElement")) {
+            console.log("react???")
             wnd.Janitor.React = obj
+            wnd.Janitor.Hooks.ReactCreateElement = obj.createElement
+            hookReactCreateElement()
+        }
         else if (prop.includes("__esModule")) {
             wnd.Janitor.esModules.push(obj)
         }

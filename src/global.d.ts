@@ -6,7 +6,9 @@ declare interface Window {
         Hooks: {
             Delta: (...args) => void,
             StopStream: (...args) => void,
-            SaveMessage: (message) => void
+            SaveMessage: (message) => void,
+
+            ReactCreateElement: (...args) => void,
         },
         Toastify: {
             showError: (message: string, sth1?, sth2?) => void,
