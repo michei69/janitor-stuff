@@ -45,10 +45,15 @@ function patchMenuSwitches() {
     rootChatMenu.render(<ChatMenuSwitch label="TTS Enabled" initialState={wnd.Janitor.TTSEnabled} onChange={(state: boolean) => {wnd.Janitor.TTSEnabled = state}} className="DOGGY_tts" />)
 }
 
+var messagesTimeout: NodeJS.Timeout
 function patchMessage(div: HTMLDivElement) {
     if (div.querySelector(".DOGGY_rwm")) return
     const chatMessageButton = div.querySelector("div._controlPanel_1tfuc_2 > button._controlPanelButton_1tfuc_8")
-    if (!chatMessageButton) return setTimeout(patchMessages, 1000)
+    if (!chatMessageButton) {
+        clearTimeout(messagesTimeout)
+        messagesTimeout = setTimeout(patchMessages, 50)
+        return
+    }
     
     const divChatMessage = document.createElement("div")
     chatMessageButton.after(divChatMessage)
@@ -65,6 +70,7 @@ function patchMessage(div: HTMLDivElement) {
 }
 
 function patchMessages() {
+    clearTimeout(messagesTimeout)
     const chatMessages = document.querySelectorAll<HTMLDivElement>("main._messagesMain_1swu7_10 div[data-index]")
     chatMessages.forEach(patchMessage)
 }
