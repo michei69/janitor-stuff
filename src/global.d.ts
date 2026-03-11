@@ -10,14 +10,8 @@ declare interface Window {
 
             ReactCreateElement: (...args) => void,
         },
-        Toastify: {
-            showError: (message: string, sth1?, sth2?) => void,
-            showInfo: (message: string) => void,
-            showWarning: (message: string) => void,
-            showSuccess: (message: string) => void
-        },
+        Toastify: Toastify,
         Stores: { [key: string]: any },
-        StoreProps: any,
         TTSEnabled: boolean,
         Generation: { [key: string]: any },
         HiddenGemsFurryFilter: boolean,
@@ -28,8 +22,17 @@ declare interface Window {
         ReactJSX: any,
         esModules: any[],
         MainModule: any,
+        Urls: Set<string>,
     },
     Object: ObjectConstructor,
+    Array: ArrayConstructor,
     mbxM: any,
     __STATSIG__: any,
+}
+
+declare type Toastify = {
+    showError: (message: string, sth1?, sth2?) => void,
+    showInfo: (message: string) => void,
+    showWarning: (message: string) => void,
+    showSuccess: (message: string) => void
 }

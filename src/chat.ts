@@ -1,7 +1,5 @@
 // util
 
-import type { JMessage } from "./tts";
-
 // https://greasyfork.org/en/scripts/551458-janitor-ai-automatic-message-formatting-corrector-settings-menu
 export function processText(text: string) {
     // 1. Remove tags if enabled
@@ -37,42 +35,38 @@ export function processText(text: string) {
     }).join('\n');
 }
 
-export default async function patchChat() {
-    if (typeof wnd.Janitor.Stores.generationStore == "undefined") return
-
+export default async function patchChat(chatStore: ChatStore) {
+    if ((chatStore.generationStore.runGenerateAnswer as any).patched) return // already patched
+    
     //* Hooking new message
-    if (typeof wnd.Janitor.Stores.generationStore.runGenerateAnswer != "undefined") {
-        if (wnd.Janitor.Stores.generationStore.runGenerateAnswer.patched) return // already patched
-        
-        if (typeof wnd.Janitor.Generation.Answer == "undefined") {
-            wnd.Janitor.Generation.Answer = wnd.Janitor.Stores.generationStore.runGenerateAnswer
-        }
-        wnd.Janitor.Stores.generationStore.runGenerateAnswer = (message: string, callback: any) => {
-            return wnd.Janitor.Generation.Answer(message, (delta: string) => {
-                wnd.Janitor.Hooks.Delta(delta)
-                callback(delta)
-            }).then(wnd.Janitor.Hooks.StopStream)
-        }
-        wnd.Janitor.Stores.generationStore.runGenerateAnswer.patched = true // so we know if we patched already
+    if (typeof wnd.Janitor.Generation.Answer == "undefined") {
+        wnd.Janitor.Generation.Answer = chatStore.generationStore.runGenerateAnswer
     }
+    chatStore.generationStore.runGenerateAnswer = (message: string, callback: any) => {
+        return wnd.Janitor.Generation.Answer(message, (delta: string) => {
+            wnd.Janitor.Hooks.Delta(delta)
+            callback(delta)
+        }).then(wnd.Janitor.Hooks.StopStream)
+    };
+    (chatStore.generationStore.runGenerateAnswer as any).patched = true // so we know if we patched already
+
     //* Hooking generate alternative message
-    if (typeof wnd.Janitor.Stores.generationStore.runGenerateAlternative != "undefined") {
-        if (typeof wnd.Janitor.Generation.Alternative == "undefined") {
-            wnd.Janitor.Generation.Alternative = wnd.Janitor.Stores.generationStore.runGenerateAlternative
-        }
-        wnd.Janitor.Stores.generationStore.runGenerateAlternative = (callback: any) => {
-            return wnd.Janitor.Generation.Alternative((delta: string) => {
-                wnd.Janitor.Hooks.Delta(delta)
-                callback(delta)
-            }).then(wnd.Janitor.Hooks.StopStream)
-        }
+    if (typeof wnd.Janitor.Generation.Alternative == "undefined") {
+        wnd.Janitor.Generation.Alternative = chatStore.generationStore.runGenerateAlternative
     }
+    chatStore.generationStore.runGenerateAlternative = (callback: any) => {
+        return wnd.Janitor.Generation.Alternative((delta: string) => {
+            wnd.Janitor.Hooks.Delta(delta)
+            callback(delta)
+        }).then(wnd.Janitor.Hooks.StopStream)
+    }
+
     //* Hooking regenerate
-    if (typeof wnd.Janitor.Stores.generationStore.runRegenerate != "undefined") {
+    if (typeof chatStore.generationStore.runRegenerate != "undefined") {
         if (typeof wnd.Janitor.Generation.Regenerate == "undefined") {
-            wnd.Janitor.Generation.Regenerate = wnd.Janitor.Stores.generationStore.runRegenerate
+            wnd.Janitor.Generation.Regenerate = chatStore.generationStore.runRegenerate
         }
-        wnd.Janitor.Stores.generationStore.runRegenerate = (callback: any) => {
+        chatStore.generationStore.runRegenerate = (callback: any) => {
             return wnd.Janitor.Generation.Regenerate((delta: string) => {
                 wnd.Janitor.Hooks.Delta(delta)
                 callback(delta)
@@ -80,11 +74,11 @@ export default async function patchChat() {
         }
     }
     //* Hooking continue
-    if (typeof wnd.Janitor.Stores.generationStore.runContinueMessage != "undefined") {
+    if (typeof chatStore.generationStore.runContinueMessage != "undefined") {
         if (typeof wnd.Janitor.Generation.Continue == "undefined") {
-            wnd.Janitor.Generation.Continue = wnd.Janitor.Stores.generationStore.runContinueMessage
+            wnd.Janitor.Generation.Continue = chatStore.generationStore.runContinueMessage
         }
-        wnd.Janitor.Stores.generationStore.runContinueMessage = (message: string, callback: any) => {
+        chatStore.generationStore.runContinueMessage = (message: string, callback: any) => {
             return wnd.Janitor.Generation.Continue(message, (delta: string) => {
                 wnd.Janitor.Hooks.Delta(delta)
                 callback(delta)
@@ -92,11 +86,11 @@ export default async function patchChat() {
         }
     }
     //* Hooking stop stream
-    if (typeof wnd.Janitor.Stores.generationStore.stopStream != "undefined") {
+    if (typeof chatStore.generationStore.stopStream != "undefined") {
         if (typeof wnd.Janitor.Generation.Stop == "undefined") {
-            wnd.Janitor.Generation.Stop = wnd.Janitor.Stores.generationStore.stopStream
+            wnd.Janitor.Generation.Stop = chatStore.generationStore.stopStream
         }
-        wnd.Janitor.Stores.generationStore.stopStream = () => {
+        chatStore.generationStore.stopStream = () => {
             // console.warn("STOPPED!")
             wnd.Janitor.Hooks.StopStream()
             return wnd.Janitor.Generation.Stop()
@@ -104,17 +98,39 @@ export default async function patchChat() {
     }
 
     //* Hooking save message
-    if (typeof wnd.Janitor.Stores.generationStore.saveNewMessageAndApplyId != "undefined") {
+    if (typeof chatStore.generationStore.saveNewMessageAndApplyId != "undefined") {
         if (typeof wnd.Janitor.Generation.saveNewMessage == "undefined") {
-            wnd.Janitor.Generation.saveNewMessage = wnd.Janitor.Stores.generationStore.saveNewMessageAndApplyId
+            wnd.Janitor.Generation.saveNewMessage = chatStore.generationStore.saveNewMessageAndApplyId
         }
-        wnd.Janitor.Stores.generationStore.saveNewMessageAndApplyId = (e: JMessage) => {
+        chatStore.generationStore.saveNewMessageAndApplyId = (e: ChatMessage) => {
             // fix formatting automatically
             if (e.is_bot && !e.message.toLowerCase().includes("{{user}}") && !e.message.toLowerCase().includes("{{char}}"))
                 e.message = processText(e.message)
             wnd.Janitor.Hooks.SaveMessage(e)
 
-            return wnd.Janitor.Generation.saveNewMessage.call(wnd.Janitor.Stores.generationStore, e)
+            return wnd.Janitor.Generation.saveNewMessage.call(chatStore.generationStore, e)
         }
     }
+    console.log("patched chat")
+}
+
+export function patchMessagesStore(store: MessagesStore) {
+    // Force all messages to be deletable
+    store.canBeDeleted = (_: any) => true;
+
+    // Force initial message to be editable
+    if (typeof (store as any).canEditMessage_ORIGINAL == "undefined")
+        (store as any).canEditMessage_ORIGINAL = store.canEditMessage
+    store.canEditMessage = (s: any) => {
+        if (s.id == (store.messages.at(0)?.id ?? 0)) {
+            let resp = (store as any).canEditMessage_ORIGINAL.call(store, {
+                ...s,
+                id: 1
+            })
+            return resp
+        }
+        return (store as any).canEditMessage_ORIGINAL.call(store, s)
+    }
+
+    console.log("patched messages")
 }

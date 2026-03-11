@@ -20,7 +20,7 @@ function patchMenuButtons() {
 
     const rootChatMenu = createRoot(divChatMenu)
     rootChatMenu.render(<ChatBurgerButton disabled={false} className="DOGGY_cwb" onClick={() => {
-        const msgs: any[] = wnd.Janitor.Stores.chatStore.messagesStore.messages
+        const msgs = (wnd.Janitor.Stores.chatStore as ChatStore).messagesStore.messages
         const count = msgs.map(v => v.message.split(" ").length).filter(v => v).reduce((v1, v2) => v1 + v2, 0)
         wnd.Janitor.Toastify.showInfo(`${count} words in this chat (${msgs.length} messages)`)
     }}>
@@ -61,8 +61,9 @@ function patchMessage(div: HTMLDivElement) {
     const rootChatMessage = createRoot(divChatMessage)
     rootChatMessage.render(<ChatMessageButton color="rgb(255,255,255)" label="test" className="DOGGY_rwm" onClick={() => {
         const message = parseInt(div.getAttribute("data-index") as string)
-        const msgs: any[] = wnd.Janitor.Stores.chatStore.messagesStore.messages
+        const msgs = (wnd.Janitor.Stores.chatStore as ChatStore).messagesStore.messages
         const msg = msgs[message]
+        if (!msg) return
         msg.message = processText(msg.message)
     }}>
         <IconMagic/>

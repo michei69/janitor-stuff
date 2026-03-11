@@ -1,3 +1,4 @@
+import patchWhatever from "../hiddengems"
 import { patchChatUI } from "./ChatUIStuff"
 
 function createElement(...args: any) {
@@ -5,6 +6,7 @@ function createElement(...args: any) {
     const res = wnd.Janitor.Hooks.ReactCreateElement.apply(this, args)
 
     patchChatUI()
+    // patchWhatever()
 
     return res
 }

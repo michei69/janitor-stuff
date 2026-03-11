@@ -67,17 +67,6 @@ function parseTextWithMarkersRegex(text: string) { // ily deepseek
     return result;
 }
 
-export type JMessage = {
-    character_id: string,
-    chat_id: number,
-    created_at: string,
-    id: number,
-    is_bot: boolean,
-    is_main: boolean,
-    message: string,
-    rating: null|number
-}
-
 //* main stuff
 export default function setupTTS() {
     var message = ""
@@ -98,7 +87,7 @@ export default function setupTTS() {
     }
 
     // non delta (aka better cuz its after we reformat the shit)
-    wnd.Janitor.Hooks.SaveMessage = (e: JMessage) => {
+    wnd.Janitor.Hooks.SaveMessage = (e: ChatMessage) => {
         if (wnd.Janitor.UseDeltaForTTS) return
         if (!e.is_bot) return // dont read user messages
         const message = e.message
