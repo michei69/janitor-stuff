@@ -1,9 +1,8 @@
 {
-  "name": "janitor-userscript",
-  "description": "basic userscript that i use for janitorAI",
+  "name": "doggo-script",
+  "description": "a userscript for janitorAI",
   "module": "src/index.ts",
   "type": "module",
-  "private": true,
   "author": {
     "name": "michei69",
     "email": "michei69@duck.com",

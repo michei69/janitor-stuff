@@ -1,4 +1,4 @@
-# janitor-userscript
+# doggo-script
 
 a custom-made userscript that adds or fixes certain functionality that was either denied or not thought of by the janitorAI team
 
@@ -6,13 +6,13 @@ a custom-made userscript that adds or fixes certain functionality that was eithe
 
 ### hooks mobx states / stores
 
-- saves any available stores and storeprops under the `Janitor` object for easy access
+- saves any available stores under the `Janitor` object for easy access
 - should be up to date even across page navigation
 
 ### hooks all esModules and react, reactDOM, reactJSX
 
 - means u can use react for any UI mods if you want to for some reason
-- would also mean you can load official components too
+- would also mean you can load official components too (i dont tho, i just rewrite the jsx lol)
 - reactDOM and reactJSX are loaded separately, as are all esModules because theres no real way to hook them unfortunately
 - react is hooked directly from the original script though
 
@@ -23,6 +23,7 @@ a custom-made userscript that adds or fixes certain functionality that was eithe
 ### autoformats bot messages
 
 - [this userscript](https://greasyfork.org/en/scripts/551458-janitor-ai-automatic-message-formatting-corrector-settings-menu), but automatically applied per message
+- also gives u the ability to rerun it for any message via a button
 
 ### rudimentary TTS support
 
@@ -40,3 +41,8 @@ a custom-made userscript that adds or fixes certain functionality that was eithe
 
 - that hiddengems tab is entirely useless to me w/o the filters
 - only shows proxy-enabled and with >=500 tokens, that are tagged with male (and, optionally, furry)
+
+### word counter
+
+- adds a button in the chat hamburger menu thing that counts the words for u
+- helpful cause sometimes 30 messages is more content than 70

@@ -9,7 +9,7 @@ export default function userscriptHeaderPlugin() {
 
             const header = 
 `// ==UserScript==
-// @name         janitor stuff
+// @name         doggo script
 // @namespace    https://github.com/michei69/janitor-stuff
 // @version      ${today}
 // @description  fixes and qol for janitor ai

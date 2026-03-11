@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         janitor stuff
+// @name         doggo script
 // @namespace    https://github.com/michei69/janitor-stuff
 // @version      2026-03-11
 // @description  fixes and qol for janitor ai
