@@ -1,8 +1,5 @@
 declare interface Window {
     Janitor: {
-        ToggleTTS: () => void,
-        ToggleDeltaTTS: () => void,
-        UseDeltaForTTS: boolean,
         Hooks: {
             Delta: (...args) => void,
             StopStream: (...args) => void,
@@ -12,9 +9,7 @@ declare interface Window {
         },
         Toastify: Toastify,
         Stores: { [key: string]: any },
-        TTSEnabled: boolean,
         Generation: { [key: string]: any },
-        HiddenGemsFurryFilter: boolean,
         Navigate: (...args) => void,
         InitState: any,
         React: any,
@@ -23,6 +18,12 @@ declare interface Window {
         esModules: any[],
         MainModule: any,
         Urls: Set<string>,
+        Settings: {
+            TTSEnabled: boolean,
+            UseDeltaForTTS: boolean,
+            HiddenGemsFurryFilter: boolean,
+            Dev: boolean,
+        }
     },
     Object: ObjectConstructor,
     Array: ArrayConstructor,

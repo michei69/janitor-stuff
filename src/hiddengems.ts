@@ -10,7 +10,7 @@ export default async function patchWhatever() {
     checkbox.type = "checkbox"
     checkbox.style.marginLeft = "8px"
     checkbox.addEventListener("change", () => {
-        wnd.Janitor.HiddenGemsFurryFilter = checkbox.checked
+        wnd.Janitor.Settings.HiddenGemsFurryFilter = checkbox.checked
     })
     hiddenGemsTab.appendChild(checkbox)
 }

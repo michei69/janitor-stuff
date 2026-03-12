@@ -3,7 +3,7 @@ import patchWhatever from "./hiddengems";
 import processDefineProp from "./hooker";
 import patchSearch from "./search";
 import { bootstrap } from "./loader";
-import setupTTS, { ToggleDeltaTTS, ToggleTTS } from "./tts";
+import setupTTS from "./tts";
 import { disableEventLogger } from "./disableLogger";
 
 (async () => {
@@ -13,9 +13,6 @@ import { disableEventLogger } from "./disableLogger";
 
     //* Setting up
     wnd.Janitor = {
-        ToggleTTS: ToggleTTS,
-        ToggleDeltaTTS: ToggleDeltaTTS,
-        UseDeltaForTTS: localStorage.getItem("UseDeltaForTTS") == "true",
         Hooks: {
             Delta: (...args) => {},
             StopStream: (...args) => {},
@@ -24,9 +21,7 @@ import { disableEventLogger } from "./disableLogger";
         },
         Toastify: null as any,
         Stores: {},
-        TTSEnabled: localStorage.getItem("TTSEnabled") == "true",
         Generation: {},
-        HiddenGemsFurryFilter: false,
         Navigate: (...args) => {},
         InitState: null,
         React: null,
@@ -34,7 +29,33 @@ import { disableEventLogger } from "./disableLogger";
         ReactJSX: null,
         esModules: [],
         MainModule: null,
-        Urls: new Set()
+        Urls: new Set(),
+        Settings: {
+            get TTSEnabled() {
+                return localStorage.getItem("Doggo-TTSEnabled") == "true"
+            },
+            set TTSEnabled(value) {
+                localStorage.setItem("Doggo-TTSEnabled", value + "")
+            },
+            get UseDeltaForTTS() {
+                return localStorage.getItem("Doggo-UseDeltaForTTS") == "true"
+            },
+            set UseDeltaForTTS(value) {
+                localStorage.setItem("Doggo-UseDeltaForTTS", value + "")
+            },
+            get HiddenGemsFurryFilter() {
+                return localStorage.getItem("Doggo-HiddenGemsFurryFilter") == "true"
+            },
+            set HiddenGemsFurryFilter(value) {
+                localStorage.setItem("Doggo-HiddenGemsFurryFilter", value + "")
+            },
+            get Dev() {
+                return localStorage.getItem("Doggo-Dev") == "true"
+            },
+            set Dev(value) {
+                localStorage.setItem("Doggo-Dev", value + "")
+            }
+        }
     }
     disableEventLogger()
 
@@ -89,7 +110,7 @@ import { disableEventLogger } from "./disableLogger";
     }
 
     // setup tts
-    if (wnd.Janitor.TTSEnabled) setupTTS();
+    if (wnd.Janitor.Settings.TTSEnabled) setupTTS();
 
     console.log("Janitor qol n shi loaded!");
 

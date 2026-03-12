@@ -1,21 +1,3 @@
-export function ToggleTTS() {
-    wnd.Janitor.TTSEnabled = !wnd.Janitor.TTSEnabled
-    localStorage.setItem("TTSEnabled", wnd.Janitor.TTSEnabled + "")
-    console.log(`TTS is now ${wnd.Janitor.TTSEnabled ? "enabled" : "disabled"}`)
-
-    if (wnd.Janitor.TTSEnabled) setupTTS()
-    else {
-        wnd.Janitor.Hooks.Delta = (...args) => {}
-        wnd.Janitor.Hooks.StopStream = (...args) => {}
-        wnd.Janitor.Hooks.SaveMessage = (message) => {}
-    }
-}
-export function ToggleDeltaTTS() {
-    wnd.Janitor.UseDeltaForTTS = !wnd.Janitor.UseDeltaForTTS
-    localStorage.setItem("UseDeltaForTTS", wnd.Janitor.UseDeltaForTTS + "")
-    console.log(`Delta TTS is now ${wnd.Janitor.UseDeltaForTTS ? "enabled" : "disabled"}`)
-}
-
 //* util
 function sendToTTS(data: any) {
     GM.xmlHttpRequest({
@@ -71,7 +53,7 @@ function parseTextWithMarkersRegex(text: string) { // ily deepseek
 export default function setupTTS() {
     var message = ""
     wnd.Janitor.Hooks.Delta = (delta: string) => {
-        if (!wnd.Janitor.UseDeltaForTTS) return
+        if (!wnd.Janitor.Settings.UseDeltaForTTS) return
         for (let el of [".", "?", "!", "*"]) {
             if (delta.includes(el) && message.replaceAll(el, "").trim().length > 0) {
                 sendToTTS({ text: message.trim() })
@@ -80,7 +62,7 @@ export default function setupTTS() {
         }
     }
     wnd.Janitor.Hooks.StopStream = () => {
-        if (!wnd.Janitor.UseDeltaForTTS) return
+        if (!wnd.Janitor.Settings.UseDeltaForTTS) return
         if (message.trim().length > 0) {
             sendToTTS({ text: message.trim() })
         }
@@ -88,7 +70,7 @@ export default function setupTTS() {
 
     // non delta (aka better cuz its after we reformat the shit)
     wnd.Janitor.Hooks.SaveMessage = (e: ChatMessage) => {
-        if (wnd.Janitor.UseDeltaForTTS) return
+        if (wnd.Janitor.Settings.UseDeltaForTTS) return
         if (!e.is_bot) return // dont read user messages
         const message = e.message
         if (message.trim().length > 0) {

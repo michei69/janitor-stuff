@@ -10,7 +10,7 @@ export default async function patchSearch(parentStore: ParentStore) {
             args.proxyenabled = true
             args.tokens = 500
             args.tokens_mode = "gte"
-            args.tag_id = wnd.Janitor.HiddenGemsFurryFilter ? [1, 53] : [1]
+            args.tag_id = wnd.Janitor.Settings.HiddenGemsFurryFilter ? [1, 53] : [1]
         }
 
         const result = await (parentStore as any).getCharacters_ORIGINAL({ page, ...args })
