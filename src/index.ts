@@ -59,9 +59,18 @@ import { disableEventLogger } from "./disableLogger";
             set RandomizeTemperature(value) {
                 localStorage.setItem("Doggo-RandomizeTemperature", value + "")
             },
+            IgnoredBots: new Set(JSON.parse(localStorage.getItem("Doggo-IgnoredBots") || "[]")),
         },
         Search: {
-            SpecialMode: "none"
+            SpecialMode: "none",
+            IgnoreBot: (characterId: string) => {
+                if (wnd.Janitor.Settings.IgnoredBots.has(characterId)) {
+                    wnd.Janitor.Settings.IgnoredBots.delete(characterId)
+                } else {
+                    wnd.Janitor.Settings.IgnoredBots.add(characterId)
+                }
+                localStorage.setItem("Doggo-IgnoredBots", JSON.stringify([...wnd.Janitor.Settings.IgnoredBots]))
+            }
         }
     }
     disableEventLogger()

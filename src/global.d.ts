@@ -23,9 +23,11 @@ declare interface Window {
             HiddenGemsFurryFilter: boolean,
             Dev: boolean,
             RandomizeTemperature: boolean,
+            IgnoredBots: Set<string>,
         },
         Search: {
             SpecialMode: "none"|"hidden_gems"|"trending"|"trending24"|"newcomer",
+            IgnoreBot: (characterId: string) => void,
         }
     },
     Object: ObjectConstructor,
