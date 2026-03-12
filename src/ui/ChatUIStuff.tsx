@@ -1,54 +1,69 @@
-import {createRoot} from "react-dom/client"
-import ChatBurgerButton from "./components/chatBurgerButton"
-import IconMagic from "./components/iconMagic"
-import ChatMessageButton from "./components/chatMessageButton"
+import { createRoot } from "react-dom/client"
+import ChatBurgerButton from "./components/ChatBurgerButton"
+import IconMagic from "./components/IconMagic"
+import ChatMessageButton from "./components/ChatMessageButton"
 import { processText } from "../chat"
-import ChatMenuSwitch from "./components/chatMenuSwitch"
+import ChatMenuSwitch from "./components/ChatMenuSwitch"
+import ChatDevMenu from "./custom/ChatDevMenu"
+import classes from "../classes"
+import GenerationSettingsSwitch from "./components/GenerationSettingsSwitch"
 
 var menuButtonsTimeout: NodeJS.Timeout
 function patchMenuButtons() {
-    if (document.querySelector(".DOGGY_cwb")) return
+    if (document.querySelector(".DOGGY_cwb") && document.querySelector(".DOGGY_dev")) return
     clearTimeout(menuButtonsTimeout)
-    const chatMenuButton = document.querySelector("div._menuList_162rw_8 > button:last-of-type")
+    const chatMenuButton = document.querySelector(`div.${classes.menuList} > button:last-of-type`)
     if (!chatMenuButton) {
         menuButtonsTimeout = setTimeout(patchMenuButtons, 50)
         return
     }
     
-    const divChatMenu = document.createElement("div")
-    chatMenuButton.after(divChatMenu)
+    if (!document.querySelector(".DOGGY_cwb")) {
+        const divChatMenu = document.createElement("div")
+        chatMenuButton.after(divChatMenu)
 
-    const rootChatMenu = createRoot(divChatMenu)
-    rootChatMenu.render(<ChatBurgerButton disabled={false} className="DOGGY_cwb" onClick={() => {
-        const msgs = (wnd.Janitor.Stores.chatStore as ChatStore).messagesStore.messages
-        const count = msgs.map(v => v.message.split(" ").length).filter(v => v).reduce((v1, v2) => v1 + v2, 0)
-        wnd.Janitor.Toastify.showInfo(`${count} words in this chat (${msgs.length} messages)`)
-    }}>
-        Show Word Count
-    </ChatBurgerButton>)
+        const rootChatMenu = createRoot(divChatMenu)
+        rootChatMenu.render(<ChatBurgerButton disabled={false} className="DOGGY_cwb" onClick={() => {
+            const msgs = (wnd.Janitor.Stores.chatStore as ChatStore).messagesStore.messages
+            const count = msgs.map(v => v.message.split(" ").length).filter(v => v).reduce((v1, v2) => v1 + v2, 0)
+            wnd.Janitor.Toastify.showInfo(`${count} words in this chat (${msgs.length} messages)`)
+        }}>
+            Show Word Count
+        </ChatBurgerButton>)
+    }
+    if (!document.querySelector(".DOGGY_dev")) {
+        const divChatMenu = document.createElement("div")
+        chatMenuButton.after(divChatMenu)
+
+
+        const rootChatMenu = createRoot(divChatMenu)
+        rootChatMenu.render(
+            <ChatDevMenu/>
+        )
+    }
 }
 var menuSwitchesTimeout: NodeJS.Timeout
 function patchMenuSwitches() {
     if (document.querySelector(".DOGGY_tts")) return
     clearTimeout(menuSwitchesTimeout)
-    const chatMenuButton = document.querySelector("div._menuList_162rw_8 > ._menuItemSwitch_hs488_94:last-of-type")
+    const chatMenuButton = document.querySelector(`div.${classes.menuList} > .${classes.menuItemSwitch}:last-of-type`)
     if (!chatMenuButton) {
         menuSwitchesTimeout = setTimeout(patchMenuSwitches, 50)
         return
     }
     
     const divChatMenu = document.createElement("div")
-    divChatMenu.classList.add("_menuItemSwitch_hs488_94")
+    divChatMenu.classList.add(classes.menuItemSwitch)
     chatMenuButton.after(divChatMenu)
 
     const rootChatMenu = createRoot(divChatMenu)
-    rootChatMenu.render(<ChatMenuSwitch label="TTS Enabled" initialState={wnd.Janitor.TTSEnabled} onChange={(state: boolean) => {wnd.Janitor.TTSEnabled = state}} className="DOGGY_tts" />)
+    rootChatMenu.render(<ChatMenuSwitch label="TTS Enabled" initialState={wnd.Janitor.Settings.TTSEnabled} onChange={(state: boolean) => {wnd.Janitor.Settings.TTSEnabled = state}} className="DOGGY_tts" />)
 }
 
 var messagesTimeout: NodeJS.Timeout
 function patchMessage(div: HTMLDivElement) {
     if (div.querySelector(".DOGGY_rwm")) return
-    const chatMessageButton = div.querySelector("div._controlPanel_1tfuc_2 > button._controlPanelButton_1tfuc_8")
+    const chatMessageButton = div.querySelector(`div.${classes.controlPanel} > button.${classes.controlPanelButton}`)
     if (!chatMessageButton) {
         clearTimeout(messagesTimeout)
         messagesTimeout = setTimeout(patchMessages, 50)
@@ -64,7 +79,8 @@ function patchMessage(div: HTMLDivElement) {
         const msgs = (wnd.Janitor.Stores.chatStore as ChatStore).messagesStore.messages
         const msg = msgs[message]
         if (!msg) return
-        msg.message = processText(msg.message)
+        const newMessage = processText(msg.message);
+        (wnd.Janitor.Stores.chatStore as ChatStore).messagesStore.editMessage(msg, newMessage)
     }}>
         <IconMagic/>
     </ChatMessageButton>)
@@ -72,16 +88,43 @@ function patchMessage(div: HTMLDivElement) {
 
 function patchMessages() {
     clearTimeout(messagesTimeout)
-    const chatMessages = document.querySelectorAll<HTMLDivElement>("main._messagesMain_1swu7_10 div[data-index]")
+    const chatMessages = document.querySelectorAll<HTMLDivElement>(`main.${classes.messagesMain} div[data-index]`)
     chatMessages.forEach(patchMessage)
+}
+
+
+var generationSettingsTimeout: NodeJS.Timeout
+function patchGenerationSettings() {
+    if (document.querySelector(".DOGGY_rng")) return
+    clearTimeout(generationSettingsTimeout)
+    const generationThinkingButton = document.querySelector(`div.${classes.settingsContainer} > div.${classes.settingsContainerContainer}`)
+    if (!generationThinkingButton) {
+        generationSettingsTimeout = setTimeout(patchGenerationSettings, 50)
+        return
+    }
+    
+    const divGenerationButton = document.createElement("div")
+    divGenerationButton.classList.add(classes.settingsContainerContainer)
+    divGenerationButton.classList.add("DOGGY_rng")
+    generationThinkingButton.after(divGenerationButton)
+
+    const rootGenerationButton = createRoot(divGenerationButton)
+    rootGenerationButton.render(<GenerationSettingsSwitch label="Randomize Temperature" state={wnd.Janitor.Settings.RandomizeTemperature} onChange={(state: boolean) => {wnd.Janitor.Settings.RandomizeTemperature = state}}>
+        <strong>What is Randomize Temperature?</strong>
+        <p>When enabled, the model's temperature will be changed by a random amount, between -0.2 and 0.2. This allows for more diversity in the generated text.</p>
+        <p>Disable this if you prefer a more deterministic and consistent output.</p>
+    </GenerationSettingsSwitch>)
 }
 
 var lastRun = 0
 export function patchChatUI() {
+    if (!wnd.Janitor.ReactDOM) return
+    if (!window.location.href.includes("/chat")) return
     if (new Date().getTime() - lastRun < 10) return
     lastRun = new Date().getTime()
     
     patchMenuButtons()
     patchMessages()
     patchMenuSwitches()
+    patchGenerationSettings()
 }

@@ -111,6 +111,29 @@ export default async function patchChat(chatStore: ChatStore) {
             return wnd.Janitor.Generation.saveNewMessage.call(chatStore.generationStore, e)
         }
     }
+
+    //* Hooking llm generate
+    if (typeof chatStore.generationStore.chatGenerateInstance != "undefined" && typeof chatStore.generationStore.chatGenerateInstance.generate != "undefined") {
+        if (typeof wnd.Janitor.Generation.LLMGenerate == "undefined") {
+            wnd.Janitor.Generation.LLMGenerate = chatStore.generationStore.chatGenerateInstance.generate
+        }
+        chatStore.generationStore.chatGenerateInstance.generate = (data: any) => {
+            if (wnd.Janitor.Settings.RandomizeTemperature) {
+                data = {
+                    ...data,
+                    userConfig: {
+                        ...data.userConfig,
+                        generation_settings: {
+                            ...data.userConfig.generation_settings,
+                            temperature: data.userConfig.generation_settings.temperature + Math.random() * 0.4 - 0.2
+                        }
+                    }
+                }
+            }
+            return wnd.Janitor.Generation.LLMGenerate.call(chatStore.generationStore.chatGenerateInstance, data)
+        }
+    }
+
     console.log("patched chat")
 }
 

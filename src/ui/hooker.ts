@@ -1,12 +1,14 @@
-import patchWhatever from "../hiddengems"
+import { patchChatLinks } from "../hiddengems"
 import { patchChatUI } from "./ChatUIStuff"
+import { patchSearchUI } from "./SearchUIStuff"
 
 function createElement(...args: any) {
     //@ts-ignore
     const res = wnd.Janitor.Hooks.ReactCreateElement.apply(this, args)
 
     patchChatUI()
-    // patchWhatever()
+    patchChatLinks()
+    patchSearchUI()
 
     return res
 }

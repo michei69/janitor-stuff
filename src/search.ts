@@ -6,11 +6,16 @@ export default async function patchSearch(parentStore: ParentStore) {
         (parentStore as any).getCharacters_ORIGINAL = parentStore.getCharacters
     }
     parentStore.getCharacters = async ({ page, ...args }: { page: number } & CharacterListParams) => {
-        if (args.special_mode == "hidden_gems") {
-            args.proxyenabled = true
-            args.tokens = 500
-            args.tokens_mode = "gte"
-            args.tag_id = wnd.Janitor.Settings.HiddenGemsFurryFilter ? [1, 53] : [1]
+        // if (args.special_mode == "hidden_gems") {
+        //     args.proxyenabled = true
+        //     args.tokens = 500
+        //     args.tokens_mode = "gte"
+        //     args.tag_id = wnd.Janitor.Settings.HiddenGemsFurryFilter ? [1, 53] : [1]
+        // }
+
+        if (document.location.href.includes("/search") && wnd.Janitor.Search.SpecialMode != "none") {
+            args.special_mode = wnd.Janitor.Search.SpecialMode
+            delete args.sort
         }
 
         const result = await (parentStore as any).getCharacters_ORIGINAL({ page, ...args })

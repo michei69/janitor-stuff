@@ -1,5 +1,4 @@
 import patchChat, { patchMessagesStore } from "./chat";
-import patchWhatever from "./hiddengems";
 import processDefineProp from "./hooker";
 import patchSearch from "./search";
 import { bootstrap } from "./loader";
@@ -23,7 +22,6 @@ import { disableEventLogger } from "./disableLogger";
         Stores: {},
         Generation: {},
         Navigate: (...args) => {},
-        InitState: null,
         React: null,
         ReactDOM: null,
         ReactJSX: null,
@@ -54,7 +52,16 @@ import { disableEventLogger } from "./disableLogger";
             },
             set Dev(value) {
                 localStorage.setItem("Doggo-Dev", value + "")
-            }
+            },
+            get RandomizeTemperature() {
+                return localStorage.getItem("Doggo-RandomizeTemperature") == "true"
+            },
+            set RandomizeTemperature(value) {
+                localStorage.setItem("Doggo-RandomizeTemperature", value + "")
+            },
+        },
+        Search: {
+            SpecialMode: "none"
         }
     }
     disableEventLogger()
@@ -79,6 +86,12 @@ import { disableEventLogger } from "./disableLogger";
                 break;
             case "parentStore":
                 patchSearch(store)
+                break;
+            case "navigateStore":
+                (store as NavigateStore).setNavigate = (navigate: any) => {
+                    wnd.Janitor.Navigate = navigate
+                    store.navigate = navigate
+                }
                 break;
         }
     }
@@ -131,6 +144,6 @@ import { disableEventLogger } from "./disableLogger";
     while (typeof wnd.Janitor.Toastify == "undefined" || typeof wnd.Janitor.Toastify?.showInfo == "undefined") {
         await new Promise(resolve => setTimeout(resolve, 100));
     }
-    wnd.Janitor.Toastify.showInfo("Loaded!")
-    patchWhatever()
+    if (wnd.Janitor.Settings.Dev)
+        wnd.Janitor.Toastify.showInfo("Loaded!")
 })()

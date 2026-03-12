@@ -11,7 +11,6 @@ declare interface Window {
         Stores: { [key: string]: any },
         Generation: { [key: string]: any },
         Navigate: (...args) => void,
-        InitState: any,
         React: any,
         ReactDOM: any,
         ReactJSX: any,
@@ -23,6 +22,10 @@ declare interface Window {
             UseDeltaForTTS: boolean,
             HiddenGemsFurryFilter: boolean,
             Dev: boolean,
+            RandomizeTemperature: boolean,
+        },
+        Search: {
+            SpecialMode: "none"|"hidden_gems"|"trending"|"trending24"|"newcomer",
         }
     },
     Object: ObjectConstructor,
