@@ -1,24 +1,24 @@
 import { createRoot } from "react-dom/client"
-import classes from "../classes"
 import SpecialSearchFilters from "./custom/SpecialSearchFilters"
 import IgnoreButton from "./components/IgnoreButton"
+import { HTMLClasses } from "../classes"
 
 var searchFilterTimeout: NodeJS.Timeout
 function patchSearchFilters() {
     if (document.querySelector(".DOGGY_csf")) return
     clearTimeout(searchFilterTimeout)
-    const filtersRadio = document.querySelector(`div.${classes.radio.radioInputs}:nth-child(2)`)
+    const filtersRadio = document.querySelector(`div[class^="_radioInputs_"]:nth-child(2)`)
     if (!filtersRadio) {
         searchFilterTimeout = setTimeout(patchSearchFilters, 50)
         return
     }
-    
+
     const divGenerationButton = document.createElement("div")
     divGenerationButton.classList.add("DOGGY_csf")
     filtersRadio.after(divGenerationButton)
 
     const rootGenerationButton = createRoot(divGenerationButton)
-    rootGenerationButton.render(<SpecialSearchFilters/>)
+    rootGenerationButton.render(<SpecialSearchFilters />)
 }
 
 var searchResultsTimeout: NodeJS.Timeout
@@ -38,7 +38,7 @@ function patchSearchResult(div: HTMLDivElement) {
         div.parentElement!.parentElement!.parentElement!.style.filter = "grayscale(100%) brightness(5%)"
         div.parentElement!.parentElement!.parentElement!.style.opacity = "75%"
     }
-    
+
     function onClick() {
         if (wnd.Janitor.Settings.IgnoredBots.has(characterId + "")) {
             div.parentElement!.parentElement!.parentElement!.style.filter = "grayscale(100%) brightness(5%)"
@@ -49,9 +49,9 @@ function patchSearchResult(div: HTMLDivElement) {
             div.parentElement!.parentElement!.parentElement!.style.opacity = ""
         }
     }
-    
+
     const rootBtn = createRoot(divBtn)
-    rootBtn.render(<IgnoreButton characterId={characterId || ""} callback={onClick}/>)
+    rootBtn.render(<IgnoreButton characterId={characterId || ""} callback={onClick} />)
 }
 function patchSearchResults() {
     clearTimeout(searchResultsTimeout)
@@ -65,7 +65,7 @@ export function patchSearchUI() {
     if (!window.location.href.includes("/search")) return
     if (new Date().getTime() - lastRun < 10) return
     lastRun = new Date().getTime()
-    
+
     patchSearchFilters()
     patchSearchResults()
 }

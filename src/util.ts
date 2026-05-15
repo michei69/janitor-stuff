@@ -7,3 +7,11 @@ export function getAllByClassPrefix(prefix: string) {
 export function getByClassPrefix(prefix: string) {
     return getAllByClassPrefix(prefix)?.[0]
 }
+
+export function getFullClassNameFromElement(element: Element, prefix: string) {
+    return element?.classList.value.match(new RegExp(prefix + "[^\W]*", "gm"))?.[0]
+}
+export function getFullClassName(selector: string, prefix: string) {
+    const el = document.querySelector(selector)
+    return el ? getFullClassNameFromElement(el, prefix) : null;
+}

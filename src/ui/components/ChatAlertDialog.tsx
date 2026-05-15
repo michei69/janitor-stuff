@@ -1,28 +1,29 @@
 import { useEffect, useRef } from "react";
-import classes from "../../classes";
+import { HTMLClasses } from "../../classes";
 import { createPortal } from "react-dom";
 
 export default function ChatAlertDialog({
-  isOpen,
-  onClose,
-  onConfirm,
-  title,
-  message,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
-  confirmButtonColor = 'purple'
+    isOpen,
+    onClose,
+    onConfirm,
+    title,
+    message,
+    confirmText = 'Confirm',
+    cancelText = 'Cancel',
+    confirmButtonColor = 'purple'
 }: {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  title: string;
-  message: string;
-  confirmText?: string;
-  cancelText?: string;
-  confirmButtonColor?: 'red' | 'purple';
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: () => void;
+    title: string;
+    message: string;
+    confirmText?: string;
+    cancelText?: string;
+    confirmButtonColor?: 'red' | 'purple';
 }) {
     const overlayRef = useRef<HTMLDivElement>(null)
     const cancelButtonRef = useRef<HTMLButtonElement>(null)
+    const cls = HTMLClasses.getInstance()
 
     useEffect(() => {
         function keyHandler(e: KeyboardEvent) {
@@ -39,7 +40,7 @@ export default function ChatAlertDialog({
         window.addEventListener("click", mouseHandler)
         document.body.style.overflow = "hidden"
         setTimeout(() => {
-          cancelButtonRef.current?.focus()
+            cancelButtonRef.current?.focus()
         }, 100)
 
         return () => {
@@ -51,36 +52,36 @@ export default function ChatAlertDialog({
 
     return isOpen ? createPortal(
         <div
-            className={classes.alertOverlay}
+            className={cls.findFirstInFile("AlertDialog-", "_alertOverlay_")}
             ref={overlayRef}
             role="alertdialog"
             aria-modal="true"
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
         >
-            <div className={classes.alertContainer}>
-                <div className={classes.alertContent}>
-                    <div className={classes.alertHeader}>
-                        <h2 id="alert-dialog-title" className={classes.alertTitle}>
+            <div className={cls.findFirstInFile("AlertDialog-", "_alertContainer_")}>
+                <div className={cls.findFirstInFile("AlertDialog-", "_alertContent_")}>
+                    <div className={cls.findFirstInFile("AlertDialog-", "_alertHeader_")}>
+                        <h2 id="alert-dialog-title" className={cls.findFirstInFile("AlertDialog-", "_alertTitle_")}>
                             {title}
                         </h2>
                     </div>
-                    <div id="alert-dialog-description" className={classes.alertBody}>
+                    <div id="alert-dialog-description" className={cls.findFirstInFile("AlertDialog-", "_alertBody_")}>
                         {message}
                     </div>
-                    <div className={classes.alertFooter}>
+                    <div className={cls.findFirstInFile("AlertDialog-", "_alertFooter_")}>
                         <button
                             ref={cancelButtonRef}
                             type="button"
                             onClick={onClose}
-                            className={`${classes.alertButton} ${classes.cancel}`}
+                            className={`${cls.findFirstInFile("AlertDialog-", "_alertButton_")} ${cls.findFirstInFile("AlertDialog-", "_cancel_")}`}
                         >
                             {cancelText}
                         </button>
                         <button
                             type="button"
                             onClick={onConfirm}
-                            className={`${classes.alertButton} ${classes.confirm}`}
+                            className={`${cls.findFirstInFile("AlertDialog-", "_alertButton_")} ${cls.findFirstInFile("AlertDialog-", "_confirm_")}`}
                             style={
                                 confirmButtonColor === "red"
                                     ? { background: "#ef4444" }

@@ -1,23 +1,23 @@
 import { createRoot } from "react-dom/client"
 import ChatBurgerButton from "./components/ChatBurgerButton"
-import IconMagic from "./components/IconMagic"
+import IconMagic from "./components/icons/IconMagic"
 import ChatMessageButton from "./components/ChatMessageButton"
 import { processText } from "../chat"
 import ChatMenuSwitch from "./components/ChatMenuSwitch"
 import ChatDevMenu from "./custom/ChatDevMenu"
-import classes from "../classes"
 import GenerationSettingsSwitch from "./components/GenerationSettingsSwitch"
+import { getFullClassNameFromElement } from "../util"
 
 var menuButtonsTimeout: NodeJS.Timeout
 function patchMenuButtons() {
     if (document.querySelector(".DOGGY_cwb") && document.querySelector(".DOGGY_dev")) return
     clearTimeout(menuButtonsTimeout)
-    const chatMenuButton = document.querySelector(`div.${classes.menuList} > button:last-of-type`)
+    const chatMenuButton = document.querySelector(`div[class^="_menuList_"] > button:last-of-type`)
     if (!chatMenuButton) {
         menuButtonsTimeout = setTimeout(patchMenuButtons, 50)
         return
     }
-    
+
     if (!document.querySelector(".DOGGY_cwb")) {
         const divChatMenu = document.createElement("div")
         chatMenuButton.after(divChatMenu)
@@ -38,7 +38,7 @@ function patchMenuButtons() {
 
         const rootChatMenu = createRoot(divChatMenu)
         rootChatMenu.render(
-            <ChatDevMenu/>
+            <ChatDevMenu />
         )
     }
 }
@@ -46,30 +46,32 @@ var menuSwitchesTimeout: NodeJS.Timeout
 function patchMenuSwitches() {
     if (document.querySelector(".DOGGY_tts")) return
     clearTimeout(menuSwitchesTimeout)
-    const chatMenuButton = document.querySelector(`div.${classes.menuList} > .${classes.menuItemSwitch}:last-of-type`)
+    const chatMenuButton = document.querySelector(`div[class^="_menuList_"] > [class^="_menuItemSwitch_"]:last-of-type`)
     if (!chatMenuButton) {
         menuSwitchesTimeout = setTimeout(patchMenuSwitches, 50)
         return
     }
-    
+    const menuListClass = getFullClassNameFromElement(chatMenuButton, "_menuItemSwitch_")
+    if (!menuListClass) return;
+
     const divChatMenu = document.createElement("div")
-    divChatMenu.classList.add(classes.menuItemSwitch)
+    divChatMenu.classList.add(menuListClass)
     chatMenuButton.after(divChatMenu)
 
     const rootChatMenu = createRoot(divChatMenu)
-    rootChatMenu.render(<ChatMenuSwitch label="TTS Enabled" initialState={wnd.Janitor.Settings.TTSEnabled} onChange={(state: boolean) => {wnd.Janitor.Settings.TTSEnabled = state}} className="DOGGY_tts" />)
+    rootChatMenu.render(<ChatMenuSwitch label="TTS Enabled" initialState={wnd.Janitor.Settings.TTSEnabled} onChange={(state: boolean) => { wnd.Janitor.Settings.TTSEnabled = state }} className="DOGGY_tts" />)
 }
 
 var messagesTimeout: NodeJS.Timeout
 function patchMessage(div: HTMLDivElement) {
     if (div.querySelector(".DOGGY_rwm")) return
-    const chatMessageButton = div.querySelector(`div.${classes.controlPanel} > button.${classes.controlPanelButton}`)
+    const chatMessageButton = div.querySelector(`div[class^="_controlPanel_"] > button[class^="_controlPanelButton_"]`)
     if (!chatMessageButton) {
         clearTimeout(messagesTimeout)
         messagesTimeout = setTimeout(patchMessages, 50)
         return
     }
-    
+
     const divChatMessage = document.createElement("div")
     chatMessageButton.after(divChatMessage)
 
@@ -82,34 +84,37 @@ function patchMessage(div: HTMLDivElement) {
         const newMessage = processText(msg.message);
         (wnd.Janitor.Stores.chatStore as ChatStore).messagesStore.editMessage(msg, newMessage)
     }}>
-        <IconMagic/>
+        <IconMagic />
     </ChatMessageButton>)
 }
 
 function patchMessages() {
     clearTimeout(messagesTimeout)
-    const chatMessages = document.querySelectorAll<HTMLDivElement>(`main.${classes.messagesMain} div[data-index]`)
+    const chatMessages = document.querySelectorAll<HTMLDivElement>(`main[class^="_messagesMain_"] div[data-index]`)
     chatMessages.forEach(patchMessage)
 }
 
 
 var generationSettingsTimeout: NodeJS.Timeout
 function patchGenerationSettings() {
+    // TODO: rewrite for new panel
     if (document.querySelector(".DOGGY_rng")) return
     clearTimeout(generationSettingsTimeout)
-    const generationThinkingButton = document.querySelector(`div.${classes.settingsContainer} > div.${classes.settingsContainerContainer}`)
+    const generationThinkingButton = document.querySelector(`div[class^="_settingsContainer_"] > div[class^="_container_"]`)
     if (!generationThinkingButton) {
         generationSettingsTimeout = setTimeout(patchGenerationSettings, 50)
         return
     }
-    
+    const settingsContainerContainer = getFullClassNameFromElement(generationThinkingButton, "_settingsContainer_")
+    if (!settingsContainerContainer) return;
+
     const divGenerationButton = document.createElement("div")
-    divGenerationButton.classList.add(classes.settingsContainerContainer)
+    divGenerationButton.classList.add(settingsContainerContainer)
     divGenerationButton.classList.add("DOGGY_rng")
     generationThinkingButton.after(divGenerationButton)
 
     const rootGenerationButton = createRoot(divGenerationButton)
-    rootGenerationButton.render(<GenerationSettingsSwitch label="Randomize Temperature" state={wnd.Janitor.Settings.RandomizeTemperature} onChange={(state: boolean) => {wnd.Janitor.Settings.RandomizeTemperature = state}}>
+    rootGenerationButton.render(<GenerationSettingsSwitch label="Randomize Temperature" state={wnd.Janitor.Settings.RandomizeTemperature} onChange={(state: boolean) => { wnd.Janitor.Settings.RandomizeTemperature = state }}>
         <strong>What is Randomize Temperature?</strong>
         <p>When enabled, the model's temperature will be changed by a random amount, between -0.2 and 0.2. This allows for more diversity in the generated text.</p>
         <p>Disable this if you prefer a more deterministic and consistent output.</p>
@@ -122,7 +127,7 @@ export function patchChatUI() {
     if (!window.location.href.includes("/chat")) return
     if (new Date().getTime() - lastRun < 10) return
     lastRun = new Date().getTime()
-    
+
     patchMenuButtons()
     patchMessages()
     patchMenuSwitches()

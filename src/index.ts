@@ -1,7 +1,7 @@
 import patchChat, { patchMessagesStore } from "./chat";
 import processDefineProp from "./hooker";
 import patchSearch from "./search";
-import { bootstrap } from "./loader";
+import { bootstrap, fetchClassesFromJSAwait } from "./loader";
 import setupTTS from "./tts";
 import { disableEventLogger } from "./disableLogger";
 
@@ -13,15 +13,15 @@ import { disableEventLogger } from "./disableLogger";
     //* Setting up
     wnd.Janitor = {
         Hooks: {
-            Delta: (...args) => {},
-            StopStream: (...args) => {},
-            SaveMessage: (message) => {},
-            ReactCreateElement: (...args) => {}
+            Delta: (...args) => { },
+            StopStream: (...args) => { },
+            SaveMessage: (message) => { },
+            ReactCreateElement: (...args) => { }
         },
         Toastify: null as any,
         Stores: {},
         Generation: {},
-        Navigate: (...args) => {},
+        Navigate: (...args) => { },
         React: null,
         ReactDOM: null,
         ReactJSX: null,
@@ -138,17 +138,18 @@ import { disableEventLogger } from "./disableLogger";
 
     // wait for react to instantiate cuz SSR has to hydrate n shi
     while (
-        typeof wnd.Janitor.React == "undefined" || 
+        typeof wnd.Janitor.React == "undefined" ||
         typeof wnd.Janitor.React?.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED == "undefined" ||
         typeof wnd.Janitor.React?.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.ReactCurrentDispatcher == "undefined" ||
         typeof wnd.Janitor.React?.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.ReactCurrentDispatcher?.current == "undefined"
-    )
-    {
+    ) {
         await new Promise(resolve => setTimeout(resolve, 100));
     }
+    console.log("load html classes")
+    fetchClassesFromJSAwait()
     console.log("load react")
     bootstrap()
-    
+
     // toastify is never loaded istfg
     while (typeof wnd.Janitor.Toastify == "undefined" || typeof wnd.Janitor.Toastify?.showInfo == "undefined") {
         await new Promise(resolve => setTimeout(resolve, 100));

@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
-import IconTrending from "../components/IconTrending";
-import IconHiddenGems from "../components/IconHiddenGems";
-import IconPeople from "../components/IconPeople";
-import IconGlobe from "../components/IconGlobe";
+import IconTrending from "../components/icons/IconTrending";
+import IconHiddenGems from "../components/icons/IconHiddenGems";
+import IconPeople from "../components/icons/IconPeople";
+import IconGlobe from "../components/icons/IconGlobe";
 import SearchFilter from "../components/SearchFilter";
 
 export default function SpecialSearchFilters() {
@@ -11,31 +11,31 @@ export default function SpecialSearchFilters() {
         {
             Icon: IconGlobe,
             label: "Normal",
-            onClick: () => {},
+            onClick: () => { },
             value: "none",
         },
         {
             Icon: IconPeople,
             label: "Newcomers",
-            onClick: () => {},
+            onClick: () => { },
             value: "newcomer",
         },
         {
             Icon: IconTrending,
             label: "Trending 24h",
-            onClick: () => {},
+            onClick: () => { },
             value: "trending24",
         },
         {
             Icon: IconTrending,
             label: "Trending",
-            onClick: () => {},
+            onClick: () => { },
             value: "trending",
         },
         {
             Icon: IconHiddenGems,
             label: "Hidden Gems",
-            onClick: () => {},
+            onClick: () => { },
             value: "hidden_gems",
         },
     ];
@@ -44,7 +44,7 @@ export default function SpecialSearchFilters() {
         setValue(value);
         wnd.Janitor.Search.SpecialMode = value;
         wnd.Janitor.Stores.searchStore.page = 1
-        wnd.Janitor.Stores.searchStore.charactersListStore.getCharacters({page: 1, ...wnd.Janitor.Stores.searchStore.searchParams})
+        wnd.Janitor.Stores.searchStore.charactersListStore.getCharacters({ page: 1, ...wnd.Janitor.Stores.searchStore.searchParams })
     }, [options, value]);
 
     return <SearchFilter options={options} value={value} onChangeTab={onChangeTab} />;

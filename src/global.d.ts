@@ -26,7 +26,7 @@ declare interface Window {
             IgnoredBots: Set<string>,
         },
         Search: {
-            SpecialMode: "none"|"hidden_gems"|"trending"|"trending24"|"newcomer",
+            SpecialMode: "none" | "hidden_gems" | "trending" | "trending24" | "newcomer",
             IgnoreBot: (characterId: string) => void,
         }
     },

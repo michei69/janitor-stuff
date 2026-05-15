@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import classes from "../../classes";
+import { HTMLClasses } from "../../classes";
 
 export default function ChatModal({
     isOpen,
@@ -11,9 +11,10 @@ export default function ChatModal({
     isOpen: boolean;
     onClose: () => void;
     children: any;
-    size?: "sm" | "md" | "lg";
+    size?: "sm" | "md" | "lg" | "xl";
 }) {
     const overlayRef = useRef<HTMLDivElement>(null);
+    const cls = HTMLClasses.getInstance()
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -43,17 +44,17 @@ export default function ChatModal({
 
     return isOpen
         ? createPortal(
-              <div className={classes.modal.modalOverlay} ref={overlayRef}>
-                  <div
-                      className={`${classes.modal.modalContainer} ${classes.modal[size]}`}
-                  >
-                      <div className={classes.modal.modalContent}>
-                          {children}
-                      </div>
-                  </div>
-              </div>,
-              document.body,
-          )
+            <div className={cls.findFirstInFile("SkeletonLoader", "_modalOverlay_")} ref={overlayRef}>
+                <div
+                    className={`${cls.findFirstInFile("SkeletonLoader", "_modalContainer_")} ${cls.findFirstAfterFirstInFile("SkeletonLoader", "_modalOverlay_", `_${size}_`)}`}
+                >
+                    <div className={cls.findFirstInFile("SkeletonLoader", "_modalContent_")}>
+                        {children}
+                    </div>
+                </div>
+            </div>,
+            document.body,
+        )
         : null;
 }
 
@@ -64,13 +65,14 @@ export function ChatModalHeader({
     children: any;
     onClose?: () => void;
 }) {
+    const cls = HTMLClasses.getInstance()
     return (
-        <div className={classes.modal.modalHeader}>
-            <div className={classes.modal.modalHeaderContent}>{children}</div>
+        <div className={cls.findFirstInFile("SkeletonLoader", "_modalHeader_")}>
+            <div className={cls.findFirstInFile("SkeletonLoader", "_modalHeaderContent_")}>{children}</div>
             {onClose && (
                 <button
                     type="button"
-                    className={classes.modal.modalClose}
+                    className={cls.findFirstInFile("SkeletonLoader", "_modalClose_")}
                     onClick={onClose}
                     aria-label="Close modal"
                 >
@@ -96,8 +98,8 @@ export function ChatModalHeader({
 }
 
 export function ChatModalBody({ children }: { children: any }) {
-    return <div className={classes.modal.modalBody}>{children}</div>;
+    return <div className={HTMLClasses.getInstance().findFirstInFile("SkeletonLoader", "_modalBody_")}>{children}</div>;
 }
 export function ChatModalFooter({ children }: { children: any }) {
-    return <div className={classes.modal.modalFooter}>{children}</div>;
+    return <div className={HTMLClasses.getInstance().findFirstInFile("SkeletonLoader", "_modalFooter_")}>{children}</div>;
 }

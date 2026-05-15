@@ -19,7 +19,7 @@ export default function processDefineProp(obj: any, prop: any, descriptor: Prope
             wnd.Janitor.esModules.push(obj)
         }
     }
-    if (descriptor.value == "Module") {
+    if (typeof descriptor.value == "string" && descriptor.value == "Module") {
         // console.log(obj, prop, descriptor)
         wnd.Janitor.esModules.push(obj)
     }

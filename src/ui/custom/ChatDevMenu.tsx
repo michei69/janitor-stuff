@@ -1,10 +1,15 @@
 import { useCallback, useState } from "react";
 import ChatBurgerButton from "../components/ChatBurgerButton";
 import ChatModal, { ChatModalBody, ChatModalFooter, ChatModalHeader } from "../components/ChatModal";
-import classes from "../../classes";
+import { HTMLClasses } from "../../classes";
+import ChatPanel from "../components/ChatPanel";
+import { createPortal } from "react-dom";
+import ChatPanelSection from "../components/ChatPanelSection";
 
 export default function ChatDevMenu() {
     const [isOpen, setIsOpen] = useState(false);
+    const [isClosing, setIsClosing] = useState(false);
+    const cls = HTMLClasses.getInstance()
 
     const exportMessages = useCallback(() => {
         const messages = (wnd.Janitor.Stores.chatStore as ChatStore).messagesStore.messages
@@ -33,8 +38,8 @@ export default function ChatDevMenu() {
                         const chatId = (wnd.Janitor.Stores.chatStore as ChatStore).chatId;
                         await chatStore.messagesStore.deleteMessage(0);
                         const messages = await chatStore.settingsStore.endpoints.api.chat.createMessages({
-                            data: data.map((m: ChatMessage) => ({...m, chat_id: chatId})),
-                            urlParams: {chatId}
+                            data: data.map((m: ChatMessage) => ({ ...m, chat_id: chatId })),
+                            urlParams: { chatId }
                         })
                         chatStore.messagesStore.setMessages(messages)
                         wnd.Janitor.Toastify.showSuccess("Messages imported")
@@ -59,12 +64,21 @@ export default function ChatDevMenu() {
                 is_main: true,
                 chat_id: chatId
             })),
-            urlParams: {chatId}
+            urlParams: { chatId }
         }).then((messages) => {
             chatStore.messagesStore.setMessages(messages)
             wnd.Janitor.Toastify.showSuccess("Messages reset")
         })
     }, [])
+
+    const closeCb = useCallback(() => {
+        if (!isOpen) return;
+        setIsClosing(true)
+        setTimeout(() => {
+            setIsOpen(false)
+            setIsClosing(false)
+        }, 1000)
+    }, [isOpen])
 
     return (
         <>
@@ -77,25 +91,44 @@ export default function ChatDevMenu() {
             >
                 Doggo Menu
             </ChatBurgerButton>
-            <ChatModal
+            {isOpen && createPortal(
+                <ChatPanel
+                    title="Doggo Menu"
+                    footer={<></>}
+                    close={closeCb}
+                    isClosing={isClosing}
+                    isBlurred={false}
+                    className="DOGGY_devmenu"
+                >
+                    <ChatPanelSection title="Messages stuff" defaultOpen={true}>
+                        <div className={cls.findFirstInFile("SkeletonLoader", "_formGroup_")}>
+                            <button className={cls.findFirstInFile("SkeletonLoader", "_inlineButton_")} onClick={resetChat}>Reset</button>
+                            <button className={cls.findFirstInFile("SkeletonLoader", "_inlineButton_")} onClick={importMessages}>Import</button>
+                            <button className={cls.findFirstInFile("SkeletonLoader", "_inlineButton_")} onClick={exportMessages}>Export</button>
+                        </div>
+                    </ChatPanelSection>
+                </ChatPanel>,
+                document.body)
+            }
+            {/*<ChatModal
                 isOpen={isOpen}
-                onClose={() => {setIsOpen(false)}}
+                onClose={() => { setIsOpen(false) }}
                 size="md"
             >
-                <ChatModalHeader onClose={() => {setIsOpen(false)}}>
-                    <h2 className={classes.modalHeader}>Doggo Menu</h2>
+                <ChatModalHeader onClose={() => { setIsOpen(false) }}>
+                    <h2 className={cls.findFirstInFile("SkeletonLoader", "_modalHeader_")}>Doggo Menu</h2>
                 </ChatModalHeader>
                 <ChatModalBody>
-                    <div style={{display: "flex", flexDirection: "column", width:"100%", gap: "1rem"}}>
-                        <h3 className={classes.modalHeader} style={{fontSize: "1rem"}}>Messages stuff</h3>
-                        <div style={{display: "flex", flexDirection: "row", width:"100%", justifyContent: "space-around"}}>
+                    <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: "1rem" }}>
+                        <h3 className={cls.findFirstInFile("SkeletonLoader", "_modalHeader_")} style={{ fontSize: "1rem" }}>Messages stuff</h3>
+                        <div style={{ display: "flex", flexDirection: "row", width: "100%", justifyContent: "space-around" }}>
                             <button className={classes.editButton} onClick={resetChat} type="button">Reset</button>
                             <button className={classes.editButton} onClick={importMessages} type="button">Import</button>
                             <button className={classes.editButton} onClick={exportMessages} type="button">Export</button>
                         </div>
                     </div>
                 </ChatModalBody>
-            </ChatModal>
+            </ChatModal>*/}
         </>
     );
 }
