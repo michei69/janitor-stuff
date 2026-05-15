@@ -1,14 +1,16 @@
 import { useCallback, useState } from "react";
 import ChatBurgerButton from "../components/ChatBurgerButton";
-import ChatModal, { ChatModalBody, ChatModalFooter, ChatModalHeader } from "../components/ChatModal";
 import { HTMLClasses } from "../../classes";
 import ChatPanel from "../components/ChatPanel";
 import { createPortal } from "react-dom";
 import ChatPanelSection from "../components/ChatPanelSection";
+import ChatPanelToggle from "../components/ChatPanelToggle";
 
 export default function ChatDevMenu() {
     const [isOpen, setIsOpen] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
+    const [dev, setDev] = useState(wnd.Janitor.Settings.Dev)
+    const [randTemp, setRandTemp] = useState(wnd.Janitor.Settings.RandomizeTemperature)
     const cls = HTMLClasses.getInstance()
 
     const exportMessages = useCallback(() => {
@@ -106,29 +108,18 @@ export default function ChatDevMenu() {
                             <button className={cls.findFirstInFile("SkeletonLoader", "_inlineButton_")} onClick={importMessages}>Import</button>
                             <button className={cls.findFirstInFile("SkeletonLoader", "_inlineButton_")} onClick={exportMessages}>Export</button>
                         </div>
+                        <ChatPanelToggle title="Developer mode" on={dev} setOn={(val: boolean) => {
+                            setDev(val)
+                            wnd.Janitor.Settings.Dev = val
+                        }} />
+                        <ChatPanelToggle title="Randomize temperature" on={randTemp} setOn={(val: boolean) => {
+                            setRandTemp(val)
+                            wnd.Janitor.Settings.RandomizeTemperature = val
+                        }} />
                     </ChatPanelSection>
                 </ChatPanel>,
                 document.body)
             }
-            {/*<ChatModal
-                isOpen={isOpen}
-                onClose={() => { setIsOpen(false) }}
-                size="md"
-            >
-                <ChatModalHeader onClose={() => { setIsOpen(false) }}>
-                    <h2 className={cls.findFirstInFile("SkeletonLoader", "_modalHeader_")}>Doggo Menu</h2>
-                </ChatModalHeader>
-                <ChatModalBody>
-                    <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: "1rem" }}>
-                        <h3 className={cls.findFirstInFile("SkeletonLoader", "_modalHeader_")} style={{ fontSize: "1rem" }}>Messages stuff</h3>
-                        <div style={{ display: "flex", flexDirection: "row", width: "100%", justifyContent: "space-around" }}>
-                            <button className={classes.editButton} onClick={resetChat} type="button">Reset</button>
-                            <button className={classes.editButton} onClick={importMessages} type="button">Import</button>
-                            <button className={classes.editButton} onClick={exportMessages} type="button">Export</button>
-                        </div>
-                    </div>
-                </ChatModalBody>
-            </ChatModal>*/}
         </>
     );
 }
