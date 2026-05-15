@@ -102,6 +102,16 @@ import { disableEventLogger } from "./disableLogger";
                     store.navigate = navigate
                 }
                 break;
+            case "userStore":
+                if (store.userAgeVerificationStore) {
+                    store.userAgeVerificationStore.ageVerification = {
+                        requiresVerification: false,
+                        isVerified: true
+                    }
+                    store.userAgeVerificationStore.apiDetectedCountryCode = "excluded"
+
+                }
+                break;
         }
     }
 
