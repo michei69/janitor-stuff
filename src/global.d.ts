@@ -28,6 +28,9 @@ declare interface Window {
         Search: {
             SpecialMode: "none" | "hidden_gems" | "trending" | "trending24" | "newcomer",
             IgnoreBot: (characterId: string) => void,
+        },
+        Helpers: {
+            fetchSystemMessage: () => Promise<string?>
         }
     },
     Object: ObjectConstructor,

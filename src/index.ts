@@ -1,4 +1,4 @@
-import patchChat, { patchMessagesStore } from "./chat";
+import patchChat, { fetchSystemMessage, patchMessagesStore } from "./chat";
 import processDefineProp from "./hooker";
 import patchSearch from "./search";
 import { bootstrap, fetchClassesFromJSAwait } from "./loader";
@@ -71,6 +71,9 @@ import { disableEventLogger } from "./disableLogger";
                 }
                 localStorage.setItem("Doggo-IgnoredBots", JSON.stringify([...wnd.Janitor.Settings.IgnoredBots]))
             }
+        },
+        Helpers: {
+            fetchSystemMessage
         }
     }
     disableEventLogger()

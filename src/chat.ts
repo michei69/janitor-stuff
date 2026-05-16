@@ -37,7 +37,7 @@ export function processText(text: string) {
 
 export default async function patchChat(chatStore: ChatStore) {
     if ((chatStore.generationStore.runGenerateAnswer as any).patched) return // already patched
-    
+
     //* Hooking new message
     if (typeof wnd.Janitor.Generation.Answer == "undefined") {
         wnd.Janitor.Generation.Answer = chatStore.generationStore.runGenerateAnswer
@@ -156,4 +156,59 @@ export function patchMessagesStore(store: MessagesStore) {
     }
 
     console.log("patched messages")
+}
+
+export async function fetchSystemMessage(): Promise<string | undefined> {
+    try {
+        const token = (await wnd.Janitor.Stores.settingsStore.supabase.auth.getSession())?.data?.session?.access_token
+        if (!token) return;
+        const genClient = wnd.Janitor.Stores.chatStore.generationStore.chatGenerateInstance.nineClient
+        if (typeof genClient.fetchOpenAIProxyGenerate_og == "undefined") {
+            genClient.fetchOpenAIProxyGenerate_og = genClient.fetchOpenAIProxyGenerate
+        }
+        var resp: any;
+        genClient.fetchOpenAIProxyGenerate = async (response: any, t: any, s: any) => {
+            if (t.reverseProxyKey == "notAProxyKey") {
+                resp = await response.json()
+                return; // error it out
+            }
+            return await genClient.fetchOpenAIProxyGenerate_og(response, t, s)
+        }
+
+        try {
+
+            const data = wnd.Janitor.Stores.chatStore.generationStore.chatGenerateInstance.nineClient.generate({
+                access_token: token,
+                generateMode: "NEW",
+                userConfig: {
+                    ...wnd.Janitor.Stores.userStore.config,
+                    reverseProxyKey: "notAProxyKey"
+                },
+                userId: wnd.Janitor.Stores.userStore.profile.id,
+                requestBody: {
+                    chat: {
+                        character_id: wnd.Janitor.Stores.chatStore.characterId
+                    },
+                    chatMessages: [{
+                        is_bot: true,
+                        is_main: true,
+                        message: "."
+                    }],
+                    generateMode: "NEW",
+                    generateType: "CHAT",
+                    profile: {},
+                    profiles: [],
+                    userConfig: {
+                        api: "openai",
+                        generation_settings: {},
+                        open_ai_mode: "proxy"
+                    }
+                }
+            })
+            for await (const _ of data) { }
+        } catch { } // this will error out
+        return resp?.messages?.[0]?.content;
+    } catch (e) {
+        console.error(e)
+    }
 }

@@ -5,12 +5,14 @@ import ChatPanel from "../components/ChatPanel";
 import { createPortal } from "react-dom";
 import ChatPanelSection from "../components/ChatPanelSection";
 import ChatPanelToggle from "../components/ChatPanelToggle";
+import ChatPanelTextArea from "../components/ChatPanelTextArea";
 
 export default function ChatDevMenu() {
     const [isOpen, setIsOpen] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
     const [dev, setDev] = useState(wnd.Janitor.Settings.Dev)
     const [randTemp, setRandTemp] = useState(wnd.Janitor.Settings.RandomizeTemperature)
+    const [sysPrompt, setSysPrompt] = useState("")
     const cls = HTMLClasses.getInstance()
 
     const exportMessages = useCallback(() => {
@@ -116,6 +118,11 @@ export default function ChatDevMenu() {
                             setRandTemp(val)
                             wnd.Janitor.Settings.RandomizeTemperature = val
                         }} />
+
+                        <div className={cls.findFirstInFile("SkeletonLoader", "_formGroup_")}>
+                            <ChatPanelTextArea placeholder="System prompt..." content={sysPrompt} setContent={setSysPrompt} />
+                            <button className={cls.findFirstInFile("SkeletonLoader", "_inlineButton_")} onClick={() => wnd.Janitor.Helpers.fetchSystemMessage().then(d => setSysPrompt(d || ""))}>Fetch system prompt</button>
+                        </div>
                     </ChatPanelSection>
                 </ChatPanel>,
                 document.body)
