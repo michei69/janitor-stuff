@@ -30,7 +30,7 @@ declare interface Window {
             IgnoreBot: (characterId: string) => void,
         },
         Helpers: {
-            fetchSystemMessage: () => Promise<string?>
+            fetchSystemMessage: () => Promise<string | undefined>
         }
     },
     Object: ObjectConstructor,
