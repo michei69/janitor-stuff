@@ -2,6 +2,8 @@
 
 a custom-made userscript that adds or fixes certain functionality that was either denied or not thought of by the janitorAI team
 
+note: due to the nature of hooking almost the entire site, this userscript WILL slow down your initial load time!
+
 # features
 
 ### hooks mobx states / stores
@@ -46,3 +48,19 @@ a custom-made userscript that adds or fixes certain functionality that was eithe
 
 - adds a button in the chat hamburger menu thing that counts the words for u
 - helpful cause sometimes 30 messages is more content than 70
+
+### import / export / reset chat messages
+
+- adds buttons to import / export / reset current messages state
+- useful if you have a huge chat and want to move it elsewhere
+
+### system prompt fetching
+
+- adds the ability to fetch system prompts of bots (proxy only)
+- "why not just sniff network?" because the `/generateAlpha` worker can now fetch the proxy itself if it recognizes a provider (e.g. deepseek)
+- useful to revive deleted / privated bots
+
+### trending, hidden gems filter
+
+- adds the filter bar to the main search as well
+- works with other filters too
