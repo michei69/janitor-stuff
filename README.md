@@ -4,6 +4,8 @@ a custom-made userscript that adds or fixes certain functionality that was eithe
 
 note: due to the nature of hooking almost the entire site, this userscript WILL slow down your initial load time!
 
+note: search / character lists in general are broken. if you were to ask me why, i dont know. react detects something and fails to hydrate which leads it to fail to render in the first place. disable the script for now.
+
 # features
 
 ### hooks mobx states / stores
@@ -60,7 +62,7 @@ note: due to the nature of hooking almost the entire site, this userscript WILL 
 - "why not just sniff network?" because the `/generateAlpha` worker can now fetch the proxy itself if it recognizes a provider (e.g. deepseek)
 - useful to revive deleted / privated bots
 
-### trending, hidden gems filter
+### ~~trending, hidden gems filter~~
 
-- adds the filter bar to the main search as well
-- works with other filters too
+- ~~adds the filter bar to the main search as well~~
+- ~~works with other filters too~~

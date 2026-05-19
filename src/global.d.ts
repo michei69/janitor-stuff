@@ -24,6 +24,7 @@ declare interface Window {
             Dev: boolean,
             RandomizeTemperature: boolean,
             IgnoredBots: Set<string>,
+            LoadOnlyInChat: boolean,
         },
         Search: {
             SpecialMode: "none" | "hidden_gems" | "trending" | "trending24" | "newcomer",

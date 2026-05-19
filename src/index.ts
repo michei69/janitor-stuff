@@ -11,6 +11,8 @@ import { patchUI } from "./ui/hooker";
     const wnd: Window = typeof unsafeWindow != "undefined" ? unsafeWindow : window
     globalThis.wnd = wnd
 
+    if (!localStorage.getItem("Doggo-LoadOnlyInChat")) localStorage.setItem("Doggo-LoadOnlyInChat", "true")
+
     //* Setting up
     wnd.Janitor = {
         Hooks: {
@@ -59,6 +61,12 @@ import { patchUI } from "./ui/hooker";
             },
             set RandomizeTemperature(value) {
                 localStorage.setItem("Doggo-RandomizeTemperature", value + "")
+            },
+            get LoadOnlyInChat() {
+                return localStorage.getItem("Doggo-LoadOnlyInChat") == "true"
+            },
+            set LoadOnlyInChat(value) {
+                localStorage.setItem("Doggo-LoadOnlyInChat", value + "")
             },
             IgnoredBots: new Set(JSON.parse(localStorage.getItem("Doggo-IgnoredBots") || "[]")),
         },
@@ -148,8 +156,6 @@ import { patchUI } from "./ui/hooker";
     // setup tts
     if (wnd.Janitor.Settings.TTSEnabled) setupTTS();
 
-    console.log("Janitor qol n shi loaded!");
-
     // wait for react to instantiate cuz SSR has to hydrate n shi
     while (
         typeof wnd.Janitor.React == "undefined" ||
@@ -159,12 +165,15 @@ import { patchUI } from "./ui/hooker";
     ) {
         await new Promise(resolve => setTimeout(resolve, 100));
     }
-    console.log("load html classes")
-    setUpClassFetching()
-    console.log("load react")
-    bootstrap()
 
-    patchUI()
+    if (!wnd.Janitor.Settings.LoadOnlyInChat || window.location.pathname.includes("/chat")) {
+        setUpClassFetching()
+        bootstrap()
+
+        patchUI()
+    }
+
+    console.log("Doggo Script Loaded!");
 
     // toastify is never loaded istfg
     while (typeof wnd.Janitor.Toastify == "undefined" || typeof wnd.Janitor.Toastify?.showInfo == "undefined") {
