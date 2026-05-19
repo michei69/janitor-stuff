@@ -2,8 +2,6 @@
 // hooker!
 // ...get it?
 
-import { hookReactCreateElement } from "./ui/hooker";
-
 //* process define prop
 export default function processDefineProp(obj: any, prop: any, descriptor: PropertyDescriptor & ThisType<any>) {
     // console.log(prop)
@@ -12,8 +10,6 @@ export default function processDefineProp(obj: any, prop: any, descriptor: Prope
         if (prop.includes("createElement")) {
             console.log("caught react obj")
             wnd.Janitor.React = obj
-            wnd.Janitor.Hooks.ReactCreateElement = obj.createElement
-            hookReactCreateElement()
         }
         else if (prop.includes("__esModule")) {
             wnd.Janitor.esModules.push(obj)

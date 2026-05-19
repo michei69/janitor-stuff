@@ -72,53 +72,26 @@ function patchMessage(div: HTMLDivElement) {
         return
     }
 
-    const divChatMessage = document.createElement("div")
-    chatMessageButton.after(divChatMessage)
+    // const divChatMessage = document.createElement("div")
+    // chatMessageButton.after(divChatMessage)
 
-    const rootChatMessage = createRoot(divChatMessage)
-    rootChatMessage.render(<ChatMessageButton color="rgb(255,255,255)" label="test" className="DOGGY_rwm" onClick={() => {
-        const message = parseInt(div.getAttribute("data-index") as string)
-        const msgs = (wnd.Janitor.Stores.chatStore as ChatStore).messagesStore.messages
-        const msg = msgs[message]
-        if (!msg) return
-        const newMessage = processText(msg.message);
-        (wnd.Janitor.Stores.chatStore as ChatStore).messagesStore.editMessage(msg, newMessage)
-    }}>
-        <IconMagic />
-    </ChatMessageButton>)
+    // const rootChatMessage = createRoot(divChatMessage)
+    // rootChatMessage.render(<ChatMessageButton color="rgb(255,255,255)" label="test" className="DOGGY_rwm" onClick={() => {
+    //     const message = parseInt(div.getAttribute("data-index") as string)
+    //     const msgs = (wnd.Janitor.Stores.chatStore as ChatStore).messagesStore.messages
+    //     const msg = msgs[message]
+    //     if (!msg) return
+    //     const newMessage = processText(msg.message);
+    //     (wnd.Janitor.Stores.chatStore as ChatStore).messagesStore.editMessage(msg, newMessage)
+    // }}>
+    //     <IconMagic />
+    // </ChatMessageButton>)
 }
 
 function patchMessages() {
     clearTimeout(messagesTimeout)
     const chatMessages = document.querySelectorAll<HTMLDivElement>(`main[class^="_messagesMain_"] div[data-index]`)
     chatMessages.forEach(patchMessage)
-}
-
-
-var generationSettingsTimeout: NodeJS.Timeout
-function patchGenerationSettings() {
-    // TODO: rewrite for new panel
-    if (document.querySelector(".DOGGY_rng")) return
-    clearTimeout(generationSettingsTimeout)
-    const generationThinkingButton = document.querySelector(`div[class^="_settingsContainer_"] > div[class^="_container_"]`)
-    if (!generationThinkingButton) {
-        generationSettingsTimeout = setTimeout(patchGenerationSettings, 50)
-        return
-    }
-    const settingsContainerContainer = getFullClassNameFromElement(generationThinkingButton, "_settingsContainer_")
-    if (!settingsContainerContainer) return;
-
-    const divGenerationButton = document.createElement("div")
-    divGenerationButton.classList.add(settingsContainerContainer)
-    divGenerationButton.classList.add("DOGGY_rng")
-    generationThinkingButton.after(divGenerationButton)
-
-    const rootGenerationButton = createRoot(divGenerationButton)
-    rootGenerationButton.render(<GenerationSettingsSwitch label="Randomize Temperature" state={wnd.Janitor.Settings.RandomizeTemperature} onChange={(state: boolean) => { wnd.Janitor.Settings.RandomizeTemperature = state }}>
-        <strong>What is Randomize Temperature?</strong>
-        <p>When enabled, the model's temperature will be changed by a random amount, between -0.2 and 0.2. This allows for more diversity in the generated text.</p>
-        <p>Disable this if you prefer a more deterministic and consistent output.</p>
-    </GenerationSettingsSwitch>)
 }
 
 var lastRun = 0
@@ -128,8 +101,7 @@ export function patchChatUI() {
     if (new Date().getTime() - lastRun < 10) return
     lastRun = new Date().getTime()
 
-    patchMenuButtons()
-    patchMessages()
-    patchMenuSwitches()
-    patchGenerationSettings()
+    // patchMenuButtons()
+    // patchMessages()
+    // patchMenuSwitches()
 }

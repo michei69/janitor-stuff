@@ -1,9 +1,10 @@
 import patchChat, { fetchSystemMessage, patchMessagesStore } from "./chat";
 import processDefineProp from "./hooker";
 import patchSearch from "./search";
-import { bootstrap, fetchClassesFromJSAwait } from "./loader";
+import { bootstrap, setUpClassFetching } from "./loader";
 import setupTTS from "./tts";
 import { disableEventLogger } from "./disableLogger";
+import { patchUI } from "./ui/hooker";
 
 (async () => {
     // we js need a window object bruh
@@ -107,12 +108,12 @@ import { disableEventLogger } from "./disableLogger";
                 break;
             case "userStore":
                 if (store.userAgeVerificationStore) {
+                    // only local
                     store.userAgeVerificationStore.ageVerification = {
                         requiresVerification: false,
                         isVerified: true
                     }
                     store.userAgeVerificationStore.apiDetectedCountryCode = "excluded"
-
                 }
                 break;
         }
@@ -159,9 +160,11 @@ import { disableEventLogger } from "./disableLogger";
         await new Promise(resolve => setTimeout(resolve, 100));
     }
     console.log("load html classes")
-    fetchClassesFromJSAwait()
+    setUpClassFetching()
     console.log("load react")
     bootstrap()
+
+    patchUI()
 
     // toastify is never loaded istfg
     while (typeof wnd.Janitor.Toastify == "undefined" || typeof wnd.Janitor.Toastify?.showInfo == "undefined") {

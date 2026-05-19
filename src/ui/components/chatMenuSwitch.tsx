@@ -6,7 +6,7 @@ export default function ChatMenuSwitch({ label, initialState, onChange, classNam
     const [state, setState] = useState(initialState)
     const cls = HTMLClasses.getInstance()
 
-    return <>
+    return <div className={cls.findFirstInFile("SkeletonLoader", "_menuItemSwitch_")} title={label}>
         <span className={`${cls.findFirstInFile("SkeletonLoader", "_menuItemLabel_")} ${className}`}>
             {label}
         </span>
@@ -14,5 +14,5 @@ export default function ChatMenuSwitch({ label, initialState, onChange, classNam
             setState(!state)
             onChange(!state)
         }} size="sm" />
-    </>
+    </div>
 }

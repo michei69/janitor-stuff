@@ -4,14 +4,14 @@ import { externalGlobalPlugin } from 'esbuild-plugin-external-global'
 
 (async () => {
     //! hacks
-    const jsxShim = 
-`{
-    jsx: (...args) => wnd.Janitor.ReactJSX.jsx(...args),
-    jsxs: (...args) => wnd.Janitor.ReactJSX.jsxs(...args),
+    const jsxShim =
+        `{
+    jsx: (...args) => wnd.Janitor.React.createElement(...args),
+    jsxs: (...args) => wnd.Janitor.React.createElement(...args),
     Fragment: Symbol.for("react.fragment")
 }`
-    const reactShim = 
-`{
+    const reactShim =
+        `{
     cloneElement: (...args) => wnd.Janitor.React.cloneElement(...args),
     createContext: (...args) => wnd.Janitor.React.createContext(...args),
     createElement: (...args) => wnd.Janitor.React.createElement(...args),
@@ -38,8 +38,8 @@ import { externalGlobalPlugin } from 'esbuild-plugin-external-global'
     useId: (...args) => wnd.Janitor.React.useId(...args),
     useTransition: (...args) => wnd.Janitor.React.useTransition(...args)
 }`
-    const reactDOMShim = 
-`{
+    const reactDOMShim =
+        `{
     createPortal: (...args) => wnd.Janitor.ReactDOM.createPortal(...args),
     createRoot: (...args) => wnd.Janitor.ReactDOM.createRoot(...args),
     findDOMNode: (...args) => wnd.Janitor.ReactDOM.findDOMNode(...args),
